@@ -1,7 +1,13 @@
 import { Box, Card, CardActionArea, Typography } from '@mui/material'
+import { areaLabel, categoryLabel } from '../utils/labels'
 
 export default function MealCard({ meal, onClick }) {
-  const details = [meal.category, meal.area].filter(Boolean).join(' · ')
+  const details = [
+    meal.category && categoryLabel(meal.category),
+    meal.area && areaLabel(meal.area),
+  ]
+    .filter(Boolean)
+    .join(' · ')
 
   return (
     <Card

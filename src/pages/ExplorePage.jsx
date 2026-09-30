@@ -4,15 +4,38 @@ import SearchIcon from '@mui/icons-material/Search'
 import CloseIcon from '@mui/icons-material/Close'
 import useDebounce from '../hooks/useDebounce'
 import useMealSearch from '../hooks/useMealSearch'
+import useFilterOptions from '../hooks/useFilterOptions'
 import MealGrid from '../components/MealGrid'
 import EmptyState from '../components/EmptyState'
+import FilterBar from '../components/FilterBar'
+import { areaLabel, categoryLabel } from '../utils/labels'
+
+const NO_FILTERS = { category: '', area: '', ingredient: '' }
 
 export default function ExplorePage() {
   const [query, setQuery] = useState('')
+  const [filters, setFilters] = useState(NO_FILTERS)
   const debouncedQuery = useDebounce(query)
-  const { meals, status, error, retry } = useMealSearch(debouncedQuery)
+  const options = useFilterOptions()
+  const { meals, status, error, retry } = useMealSearch({ query: debouncedQuery, ...filters })
 
-  const searching = debouncedQuery.trim() !== ''
+  const searchText = debouncedQuery.trim()
+  const activeFilters = [
+    filters.category && categoryLabel(filters.category),
+    filters.area && areaLabel(filters.area),
+    filters.ingredient && `com ${filters.ingredient}`,
+  ].filter(Boolean)
+
+  let heading = 'Em destaque'
+  if (searchText) heading = `Resultados para “${searchText}”`
+  else if (activeFilters.length > 0) heading = activeFilters.join(' · ')
+
+  const updateFilters = (changes) => setFilters((prev) => ({ ...prev, ...changes }))
+
+  const clearAll = () => {
+    setQuery('')
+    setFilters(NO_FILTERS)
+  }
 
   return (
     <Box>
@@ -40,6 +63,7 @@ export default function ExplorePage() {
         }}
         sx={{
           maxWidth: 640,
+          mb: 3,
           '& .MuiOutlinedInput-root': {
             borderRadius: 999,
             bgcolor: 'background.paper',
@@ -50,12 +74,28 @@ export default function ExplorePage() {
         }}
       />
 
-      <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', mt: 6, mb: 3 }}>
+      <FilterBar
+        options={options}
+        filters={filters}
+        onChange={updateFilters}
+        onClear={() => setFilters(NO_FILTERS)}
+      />
+
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'baseline',
+          justifyContent: 'space-between',
+          gap: 2,
+          mt: 6,
+          mb: 3,
+        }}
+      >
         <Typography variant="h5" component="h2">
-          {searching ? `Resultados para “${debouncedQuery.trim()}”` : 'Em destaque'}
+          {heading}
         </Typography>
         {status === 'success' && meals.length > 0 && (
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="text.secondary" sx={{ flexShrink: 0 }}>
             {meals.length} {meals.length === 1 ? 'receita' : 'receitas'}
           </Typography>
         )}
@@ -74,8 +114,12 @@ export default function ExplorePage() {
       {status === 'success' && meals.length === 0 && (
         <EmptyState
           title="Nenhuma receita encontrada"
-          description="A TheMealDB tem receitas em inglês. Tente termos como chicken, pasta ou cake."
-          action={<Button variant="outlined" onClick={() => setQuery('')}>Limpar busca</Button>}
+          description={
+            activeFilters.length > 0
+              ? 'Nenhuma receita atende a essa combinação. Tente remover algum filtro.'
+              : 'A TheMealDB tem receitas em inglês. Tente termos como chicken, pasta ou cake.'
+          }
+          action={<Button variant="outlined" onClick={clearAll}>Limpar busca e filtros</Button>}
         />
       )}
 
