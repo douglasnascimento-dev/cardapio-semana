@@ -12,6 +12,18 @@ async function request(path, { signal } = {}) {
   return response.json()
 }
 
+// O modo de preparo vem como um texto só, com quebras de linha e numeração
+// inconsistente ("01.", "1)", "STEP 1", às vezes nenhuma). Aqui vira uma
+// lista de passos sem numeração, e a interface numera do seu jeito.
+function splitInstructions(text) {
+  if (!text) return []
+  return text
+    .split(/\r?\n/)
+    .map((line) => line.replace(/^\s*(step\s*\d+\s*[:.)-]?|\d+\s*[.):-])\s*/i, '').trim())
+    // descarta linhas que são só numeração, como "STEP 2" ou "2"
+    .filter((line) => line && !/^(step\s*)?\d*[.)]?$/i.test(line))
+}
+
 // A API devolve os ingredientes "achatados" em strIngredient1..20 e
 // strMeasure1..20, com valores vazios, só com espaços ou null.
 // Aqui viram um array limpo: [{ name, measure }].
@@ -32,6 +44,7 @@ export function normalizeMeal(raw) {
     category: raw.strCategory || null,
     area: raw.strArea || null,
     instructions: raw.strInstructions || '',
+    steps: splitInstructions(raw.strInstructions),
     tags: raw.strTags
       ? raw.strTags.split(',').map((tag) => tag.trim()).filter(Boolean)
       : [],
@@ -48,6 +61,11 @@ function normalizeSummary(raw) {
     name: raw.strMeal,
     thumb: raw.strMealThumb,
   }
+}
+
+// Foto do ingrediente (variações: -small, -medium ou sem sufixo)
+export function ingredientImage(name, size = 'small') {
+  return `https://www.themealdb.com/images/ingredients/${encodeURIComponent(name)}-${size}.png`
 }
 
 export async function searchMealsByName(name, options) {
