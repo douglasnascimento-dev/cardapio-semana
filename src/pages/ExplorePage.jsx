@@ -8,6 +8,7 @@ import useFilterOptions from '../hooks/useFilterOptions'
 import MealGrid from '../components/MealGrid'
 import EmptyState from '../components/EmptyState'
 import FilterBar from '../components/FilterBar'
+import MealDetailsDialog from '../components/MealDetailsDialog'
 import { areaLabel, categoryLabel } from '../utils/labels'
 
 const NO_FILTERS = { category: '', area: '', ingredient: '' }
@@ -15,6 +16,10 @@ const NO_FILTERS = { category: '', area: '', ingredient: '' }
 export default function ExplorePage() {
   const [query, setQuery] = useState('')
   const [filters, setFilters] = useState(NO_FILTERS)
+  // A receita selecionada continua guardada depois de fechar a janela,
+  // para o conteúdo não sumir durante a animação de saída.
+  const [selectedMeal, setSelectedMeal] = useState(null)
+  const [detailsOpen, setDetailsOpen] = useState(false)
   const debouncedQuery = useDebounce(query)
   const options = useFilterOptions()
   const { meals, status, error, retry } = useMealSearch({ query: debouncedQuery, ...filters })
@@ -31,6 +36,11 @@ export default function ExplorePage() {
   else if (activeFilters.length > 0) heading = activeFilters.join(' · ')
 
   const updateFilters = (changes) => setFilters((prev) => ({ ...prev, ...changes }))
+
+  const openDetails = (meal) => {
+    setSelectedMeal(meal)
+    setDetailsOpen(true)
+  }
 
   const clearAll = () => {
     setQuery('')
@@ -123,7 +133,15 @@ export default function ExplorePage() {
         />
       )}
 
-      {status === 'success' && meals.length > 0 && <MealGrid meals={meals} />}
+      {status === 'success' && meals.length > 0 && (
+        <MealGrid meals={meals} onSelect={openDetails} />
+      )}
+
+      <MealDetailsDialog
+        meal={selectedMeal}
+        open={detailsOpen}
+        onClose={() => setDetailsOpen(false)}
+      />
     </Box>
   )
 }
