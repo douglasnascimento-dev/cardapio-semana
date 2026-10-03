@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit'
 import favoritesReducer from './favoritesSlice'
 import mealsReducer from './mealsSlice'
+import planReducer from './planSlice'
 
 const STORAGE_KEY = 'cardapio-semana:v1'
 
@@ -17,8 +18,8 @@ function loadState() {
 
 function saveState(state) {
   try {
-    const { favorites, meals } = state
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ favorites, meals }))
+    const { favorites, meals, plan } = state
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ favorites, meals, plan }))
   } catch {
     // sem espaço ou sem permissão: segue sem salvar
   }
@@ -28,6 +29,7 @@ export const store = configureStore({
   reducer: {
     favorites: favoritesReducer,
     meals: mealsReducer,
+    plan: planReducer,
   },
   preloadedState: loadState(),
 })

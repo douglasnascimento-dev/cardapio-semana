@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { toggleFavorite } from './favoritesSlice'
+import { setMeal } from './planSlice'
 
 // Junta os dados novos com os que já existem, sem apagar o que já se sabe.
 // Ex.: um resultado de filtro não tem ingredientes, e isso não pode
@@ -21,12 +22,16 @@ const mealsSlice = createSlice({
       mergeMeal(state.byId, action.payload)
     },
   },
-  // Um mesmo action pode ser tratado por vários slices: ao favoritar,
-  // o favoritesSlice guarda o id e este slice guarda os dados da receita.
+  // Um mesmo action pode ser tratado por vários slices: ao favoritar ou
+  // planejar, o outro slice guarda o id e este guarda os dados da receita.
   extraReducers: (builder) => {
-    builder.addCase(toggleFavorite, (state, action) => {
-      mergeMeal(state.byId, action.payload)
-    })
+    builder
+      .addCase(toggleFavorite, (state, action) => {
+        mergeMeal(state.byId, action.payload)
+      })
+      .addCase(setMeal, (state, action) => {
+        mergeMeal(state.byId, action.payload.meal)
+      })
   },
 })
 
