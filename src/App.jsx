@@ -1,40 +1,58 @@
 import { useState } from 'react'
 import { AppBar, Box, Container, Tab, Tabs, Typography } from '@mui/material'
+import { useSelector } from 'react-redux'
 import ExplorePage from './pages/ExplorePage'
 import PlannerPage from './pages/PlannerPage'
 import ShoppingListPage from './pages/ShoppingListPage'
 import FavoritesPage from './pages/FavoritesPage'
+import { selectFavoritesCount } from './store/selectors'
 
 const TABS = [
   {
+    id: 'explore',
     label: 'Explorar',
     title: 'O que vamos cozinhar?',
     subtitle: 'Receitas do mundo todo, por nome, categoria, origem ou ingrediente.',
-    page: <ExplorePage />,
+    Page: ExplorePage,
   },
   {
+    id: 'planner',
     label: 'Planejador',
     title: 'Sua semana à mesa',
     subtitle: 'Organize almoço e jantar de segunda a domingo.',
-    page: <PlannerPage />,
+    Page: PlannerPage,
   },
   {
+    id: 'shopping',
     label: 'Lista de compras',
     title: 'Lista de compras',
     subtitle: 'Gerada automaticamente a partir do seu cardápio.',
-    page: <ShoppingListPage />,
+    Page: ShoppingListPage,
   },
   {
+    id: 'favorites',
     label: 'Favoritos',
     title: 'Favoritos',
     subtitle: 'As receitas que você quer ter sempre por perto.',
-    page: <FavoritesPage />,
+    Page: FavoritesPage,
   },
 ]
 
+// Número discreto ao lado do nome da aba
+function TabCount({ value }) {
+  if (!value) return null
+  return (
+    <Box component="span" sx={{ ml: 0.75, fontSize: 12, color: 'secondary.main', fontWeight: 600 }}>
+      {value}
+    </Box>
+  )
+}
+
 export default function App() {
-  const [tab, setTab] = useState(0)
-  const current = TABS[tab]
+  const [tab, setTab] = useState('explore')
+  const favoritesCount = useSelector(selectFavoritesCount)
+  const current = TABS.find((t) => t.id === tab)
+  const counts = { favorites: favoritesCount }
 
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -65,7 +83,17 @@ export default function App() {
             sx={{ mx: { xs: -1.75, md: 0 } }}
           >
             {TABS.map((t) => (
-              <Tab key={t.label} label={t.label} disableRipple />
+              <Tab
+                key={t.id}
+                value={t.id}
+                label={
+                  <span>
+                    {t.label}
+                    <TabCount value={counts[t.id]} />
+                  </span>
+                }
+                disableRipple
+              />
             ))}
           </Tabs>
         </Container>
@@ -88,7 +116,7 @@ export default function App() {
           </Typography>
         </Box>
 
-        {current.page}
+        <current.Page onNavigate={setTab} />
       </Container>
 
       <Box component="footer" sx={{ borderTop: 1, borderColor: 'divider', py: 3 }}>

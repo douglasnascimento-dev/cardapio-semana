@@ -1,5 +1,6 @@
 import { Box, Card, CardActionArea, Typography } from '@mui/material'
 import { areaLabel, categoryLabel } from '../utils/labels'
+import FavoriteButton from './FavoriteButton'
 
 export default function MealCard({ meal, onClick }) {
   const details = [
@@ -12,12 +13,18 @@ export default function MealCard({ meal, onClick }) {
   return (
     <Card
       sx={{
+        position: 'relative',
         bgcolor: 'transparent',
         border: 'none',
         borderRadius: 0,
         '&:hover img': { transform: 'scale(1.04)' },
       }}
     >
+      {/* Fora do CardActionArea: um botão não pode ficar dentro de outro */}
+      <Box sx={{ position: 'absolute', top: 12, right: 12, zIndex: 1 }}>
+        <FavoriteButton meal={meal} />
+      </Box>
+
       <CardActionArea
         onClick={onClick}
         disableRipple

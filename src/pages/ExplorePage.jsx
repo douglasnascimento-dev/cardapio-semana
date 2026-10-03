@@ -5,6 +5,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import useDebounce from '../hooks/useDebounce'
 import useMealSearch from '../hooks/useMealSearch'
 import useFilterOptions from '../hooks/useFilterOptions'
+import useMealDialog from '../hooks/useMealDialog'
 import MealGrid from '../components/MealGrid'
 import EmptyState from '../components/EmptyState'
 import FilterBar from '../components/FilterBar'
@@ -16,10 +17,7 @@ const NO_FILTERS = { category: '', area: '', ingredient: '' }
 export default function ExplorePage() {
   const [query, setQuery] = useState('')
   const [filters, setFilters] = useState(NO_FILTERS)
-  // A receita selecionada continua guardada depois de fechar a janela,
-  // para o conteúdo não sumir durante a animação de saída.
-  const [selectedMeal, setSelectedMeal] = useState(null)
-  const [detailsOpen, setDetailsOpen] = useState(false)
+  const dialog = useMealDialog()
   const debouncedQuery = useDebounce(query)
   const options = useFilterOptions()
   const { meals, status, error, retry } = useMealSearch({ query: debouncedQuery, ...filters })
@@ -36,11 +34,6 @@ export default function ExplorePage() {
   else if (activeFilters.length > 0) heading = activeFilters.join(' · ')
 
   const updateFilters = (changes) => setFilters((prev) => ({ ...prev, ...changes }))
-
-  const openDetails = (meal) => {
-    setSelectedMeal(meal)
-    setDetailsOpen(true)
-  }
 
   const clearAll = () => {
     setQuery('')
@@ -134,14 +127,10 @@ export default function ExplorePage() {
       )}
 
       {status === 'success' && meals.length > 0 && (
-        <MealGrid meals={meals} onSelect={openDetails} />
+        <MealGrid meals={meals} onSelect={dialog.openDetails} />
       )}
 
-      <MealDetailsDialog
-        meal={selectedMeal}
-        open={detailsOpen}
-        onClose={() => setDetailsOpen(false)}
-      />
+      <MealDetailsDialog meal={dialog.selectedMeal} open={dialog.open} onClose={dialog.close} />
     </Box>
   )
 }

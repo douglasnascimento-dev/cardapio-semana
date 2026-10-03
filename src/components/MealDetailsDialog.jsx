@@ -13,6 +13,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutlineOutlined'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import useMealDetails from '../hooks/useMealDetails'
+import FavoriteButton from './FavoriteButton'
 import { ingredientImage } from '../api/mealdb'
 import { areaLabel, categoryLabel } from '../utils/labels'
 
@@ -186,41 +187,55 @@ export default function MealDetailsDialog({ meal, open, onClose, actions }) {
           {data.name}
         </Typography>
 
-        {details && (
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1, mb: 5 }}>
+        {details?.tags.length > 0 && (
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 3 }}>
             {details.tags.map((tag) => (
               <Chip key={tag} label={tag} size="small" variant="outlined" />
             ))}
-            <Box sx={{ flex: 1 }} />
-            {details.youtube && (
-              <Button
-                href={details.youtube}
-                target="_blank"
-                rel="noreferrer"
-                variant="outlined"
-                color="inherit"
-                startIcon={<PlayCircleOutlineIcon />}
-              >
-                Assistir vídeo
-              </Button>
-            )}
-            {details.source && (
-              <Button
-                href={details.source}
-                target="_blank"
-                rel="noreferrer"
-                color="inherit"
-                endIcon={<OpenInNewIcon fontSize="small" />}
-                sx={{ color: 'text.secondary' }}
-              >
-                Fonte
-              </Button>
-            )}
           </Box>
         )}
 
-        {/* Espaço para os botões de favoritar e adicionar ao plano (fases 6 e 7) */}
-        {actions && <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 5 }}>{actions}</Box>}
+        <Box
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            gap: 1,
+            pb: 4,
+            mb: 4,
+            borderBottom: 1,
+            borderColor: 'divider',
+          }}
+        >
+          <FavoriteButton meal={data} variant="button" />
+          {/* Espaço para o botão de adicionar ao plano (fase 7) */}
+          {actions}
+          <Box sx={{ flex: 1 }} />
+          {details?.youtube && (
+            <Button
+              href={details.youtube}
+              target="_blank"
+              rel="noreferrer"
+              variant="outlined"
+              color="inherit"
+              startIcon={<PlayCircleOutlineIcon />}
+            >
+              Assistir vídeo
+            </Button>
+          )}
+          {details?.source && (
+            <Button
+              href={details.source}
+              target="_blank"
+              rel="noreferrer"
+              color="inherit"
+              endIcon={<OpenInNewIcon fontSize="small" />}
+              sx={{ color: 'text.secondary' }}
+            >
+              Fonte
+            </Button>
+          )}
+        </Box>
 
         {status === 'loading' && <DetailsSkeleton />}
 
