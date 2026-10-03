@@ -14,6 +14,7 @@ import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutlineOutlined
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import useMealDetails from '../hooks/useMealDetails'
 import FavoriteButton from './FavoriteButton'
+import AddToPlanButton from './AddToPlanButton'
 import { ingredientImage } from '../api/mealdb'
 import { areaLabel, categoryLabel } from '../utils/labels'
 
@@ -119,7 +120,7 @@ function DetailsSkeleton() {
 
 // `meal` pode ser só o resumo vindo do card (id, nome e foto). Ele é
 // mostrado na hora, enquanto o restante é carregado pelo useMealDetails.
-export default function MealDetailsDialog({ meal, open, onClose, actions }) {
+export default function MealDetailsDialog({ meal, open, onClose }) {
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'))
   const { meal: details, status, error, retry } = useMealDetails(meal?.id)
@@ -207,9 +208,8 @@ export default function MealDetailsDialog({ meal, open, onClose, actions }) {
             borderColor: 'divider',
           }}
         >
+          <AddToPlanButton meal={data} />
           <FavoriteButton meal={data} variant="button" />
-          {/* Espaço para o botão de adicionar ao plano (fase 7) */}
-          {actions}
           <Box sx={{ flex: 1 }} />
           {details?.youtube && (
             <Button
