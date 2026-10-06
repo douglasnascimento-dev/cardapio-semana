@@ -5,7 +5,7 @@ import ExplorePage from './pages/ExplorePage'
 import PlannerPage from './pages/PlannerPage'
 import ShoppingListPage from './pages/ShoppingListPage'
 import FavoritesPage from './pages/FavoritesPage'
-import { selectFavoritesCount } from './store/selectors'
+import { selectFavoritesCount, selectPlannedCount } from './store/selectors'
 
 const TABS = [
   {
@@ -52,7 +52,8 @@ export default function App() {
   const [tab, setTab] = useState('explore')
   const favoritesCount = useSelector(selectFavoritesCount)
   const current = TABS.find((t) => t.id === tab)
-  const counts = { favorites: favoritesCount }
+  const plannedCount = useSelector(selectPlannedCount)
+  const counts = { planner: plannedCount, favorites: favoritesCount }
 
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>

@@ -22,7 +22,8 @@ const theme = createTheme({
     text: { primary: colors.ink, secondary: colors.muted },
     divider: colors.line,
   },
-  shape: { borderRadius: 14 },
+  // Base pequena de propósito: no sx, `borderRadius: 3` vale 3 × 4 = 12px
+  shape: { borderRadius: 4 },
   typography: {
     fontFamily: '"Inter", system-ui, -apple-system, sans-serif',
     h1: { fontFamily: serif, fontWeight: 500, letterSpacing: '-0.03em' },
