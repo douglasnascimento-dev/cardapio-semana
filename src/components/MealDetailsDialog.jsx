@@ -15,7 +15,7 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import useMealDetails from '../hooks/useMealDetails'
 import FavoriteButton from './FavoriteButton'
 import AddToPlanButton from './AddToPlanButton'
-import { ingredientImage } from '../api/mealdb'
+import IngredientImage from './IngredientImage'
 import { areaLabel, categoryLabel } from '../utils/labels'
 
 function SectionTitle({ children, aside }) {
@@ -59,13 +59,7 @@ function IngredientList({ ingredients }) {
             borderColor: 'divider',
           }}
         >
-          <Box
-            component="img"
-            src={ingredientImage(item.name)}
-            alt=""
-            loading="lazy"
-            sx={{ width: 36, height: 36, objectFit: 'contain', flexShrink: 0 }}
-          />
+          <IngredientImage name={item.name} size={36} />
           <Typography sx={{ flex: 1, fontSize: 15, '&::first-letter': { textTransform: 'uppercase' } }}>
             {item.name}
           </Typography>
