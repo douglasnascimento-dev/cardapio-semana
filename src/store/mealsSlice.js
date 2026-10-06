@@ -1,4 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { getMealById } from '../api/mealdb'
 import { toggleFavorite } from './favoritesSlice'
 import { setMeal } from './planSlice'
 
@@ -13,10 +14,31 @@ function mergeMeal(byId, meal) {
   byId[meal.id] = { ...current, ...known }
 }
 
-// "Banco" local de receitas, indexado por id: { byId: { '52771': {...} } }
+// Busca a receita completa na API (lookup.php). Usado pela lista de
+// compras: receitas que vieram de um filtro não têm ingredientes.
+export const fetchMealById = createAsyncThunk(
+  'meals/fetchById',
+  async (id) => {
+    const meal = await getMealById(id)
+    if (!meal) throw new Error('Receita não encontrada.')
+    return meal
+  },
+  {
+    // Evita requisições repetidas: não busca se já tem os ingredientes
+    // ou se a mesma receita já está sendo carregada.
+    condition: (id, { getState }) => {
+      const { meals } = getState()
+      if (meals.byId[id]?.ingredients) return false
+      if (meals.requests[id] === 'loading') return false
+    },
+  },
+)
+
+// byId:     "banco" local de receitas, indexado por id
+// requests: andamento das buscas, ex.: { '52771': 'loading' | 'error' }
 const mealsSlice = createSlice({
   name: 'meals',
-  initialState: { byId: {} },
+  initialState: { byId: {}, requests: {} },
   reducers: {
     cacheMeal(state, action) {
       mergeMeal(state.byId, action.payload)
@@ -31,6 +53,17 @@ const mealsSlice = createSlice({
       })
       .addCase(setMeal, (state, action) => {
         mergeMeal(state.byId, action.payload.meal)
+      })
+      // As três etapas de um createAsyncThunk: pendente, ok e erro
+      .addCase(fetchMealById.pending, (state, action) => {
+        state.requests[action.meta.arg] = 'loading'
+      })
+      .addCase(fetchMealById.fulfilled, (state, action) => {
+        mergeMeal(state.byId, action.payload)
+        delete state.requests[action.meta.arg]
+      })
+      .addCase(fetchMealById.rejected, (state, action) => {
+        state.requests[action.meta.arg] = 'error'
       })
   },
 })
