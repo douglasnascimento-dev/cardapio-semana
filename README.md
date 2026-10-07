@@ -4,6 +4,8 @@ Aplicação web (SPA) para planejar as refeições da semana com receitas do mun
 
 Projeto 1 da disciplina **Programação Web Fullstack**
 
+**ACESSO AO VERCEL**: https://cardapio-semana-chi.vercel.app/
+
 ---
 
 ## Funcionalidades
