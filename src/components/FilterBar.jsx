@@ -1,7 +1,6 @@
 import { Autocomplete, Box, Button, Chip, TextField, createFilterOptions } from '@mui/material'
 import { AREAS, categoryLabel } from '../utils/labels'
 
-// São quase mil ingredientes: mostrar só os primeiros que batem com o texto
 const filterIngredients = createFilterOptions({ limit: 60 })
 
 const fieldSx = {

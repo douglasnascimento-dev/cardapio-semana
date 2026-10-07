@@ -20,7 +20,6 @@ export default function MealCard({ meal, onClick }) {
         '&:hover img': { transform: 'scale(1.04)' },
       }}
     >
-      {/* Fora do CardActionArea: um botão não pode ficar dentro de outro */}
       <Box sx={{ position: 'absolute', top: 12, right: 12, zIndex: 1 }}>
         <FavoriteButton meal={meal} />
       </Box>

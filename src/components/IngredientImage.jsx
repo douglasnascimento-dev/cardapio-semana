@@ -2,9 +2,6 @@ import { useState } from 'react'
 import { Box } from '@mui/material'
 import { ingredientImage } from '../api/mealdb'
 
-// Nem todo ingrediente tem foto na TheMealDB (ex.: "Coconut Oil").
-// Quando a imagem falha, mostra um círculo neutro no lugar do ícone
-// de imagem quebrada.
 export default function IngredientImage({ name, size = 40 }) {
   const [failed, setFailed] = useState(false)
 

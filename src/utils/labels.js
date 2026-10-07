@@ -1,5 +1,3 @@
-// Traduções e listas usadas nos filtros e nos cards.
-
 const CATEGORY_LABELS = {
   Beef: 'Carne bovina',
   Breakfast: 'Café da manhã',
@@ -21,13 +19,6 @@ export function categoryLabel(category) {
   return CATEGORY_LABELS[category] ?? category
 }
 
-// Por que a lista de origens não vem da API?
-// O list.php?a=list devolve 195 origens, mas só ~30 têm receitas. Além
-// disso, as receitas misturam nome do país ("India", "France") com
-// gentílico ("Italian", "British"), e filter.php?a=Indian devolve vazio.
-// Testando todas, o nome do país em inglês funciona sempre, então ele é
-// o `value` usado no filtro. `aliases` são as outras formas que aparecem
-// no campo strArea das receitas.
 export const AREAS = [
   { value: 'Algeria', label: 'Argélia', aliases: ['Algerian'] },
   { value: 'Argentina', label: 'Argentina', aliases: ['Argentine'] },
@@ -84,7 +75,6 @@ export function areaLabel(name) {
   return findArea(name)?.label ?? name
 }
 
-// "Italian" e "Italy" são a mesma origem
 export function sameArea(a, b) {
   const found = findArea(a)
   return found ? found === findArea(b) : a === b

@@ -6,14 +6,10 @@ import shoppingReducer from './shoppingSlice'
 
 const STORAGE_KEY = 'cardapio-semana:v1'
 
-// O localStorage pode estar indisponível (aba anônima, bloqueio do
-// navegador) ou com dados corrompidos. Nesses casos o app começa vazio.
 function loadState() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY))
     if (!saved) return undefined
-    // O andamento das buscas (requests) não é salvo: ao abrir o app de
-    // novo, nada está carregando.
     return { ...saved, meals: { byId: saved.meals?.byId ?? {}, requests: {} } }
   } catch {
     return undefined
@@ -25,8 +21,9 @@ function saveState(state) {
     const { favorites, meals, plan, shopping } = state
     const data = { favorites, meals: { byId: meals.byId }, plan, shopping }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+    return true
   } catch {
-    // sem espaço ou sem permissão: segue sem salvar
+    return false
   }
 }
 
@@ -40,7 +37,6 @@ export const store = configureStore({
   preloadedState: loadState(),
 })
 
-// Salva a cada mudança, mas no máximo uma vez a cada 500 ms
 let saveTimer = null
 store.subscribe(() => {
   clearTimeout(saveTimer)

@@ -14,7 +14,6 @@ export default function ShoppingItem({ item, onToggle }) {
         opacity: item.checked ? 0.45 : 1,
       }}
     >
-      {/* O <label> inteiro é clicável, não só a bolinha */}
       <Box
         component="label"
         sx={{ display: 'flex', alignItems: 'center', gap: 1.5, py: 1.25, cursor: 'pointer' }}

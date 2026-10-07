@@ -1,7 +1,5 @@
 import { createTheme } from '@mui/material/styles'
 
-// Paleta neutra e quente: fundo creme, texto quase preto e um único
-// acento terracota, usado com moderação.
 const colors = {
   ink: '#1F1E1B',
   muted: '#6F6C64',
@@ -22,7 +20,6 @@ const theme = createTheme({
     text: { primary: colors.ink, secondary: colors.muted },
     divider: colors.line,
   },
-  // Base pequena de propósito: no sx, `borderRadius: 3` vale 3 × 4 = 12px
   shape: { borderRadius: 4 },
   typography: {
     fontFamily: '"Inter", system-ui, -apple-system, sans-serif',

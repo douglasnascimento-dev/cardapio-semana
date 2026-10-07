@@ -1,6 +1,5 @@
 import { Box, Typography } from '@mui/material'
 
-// Mensagem centralizada para listas vazias e erros
 export default function EmptyState({ title, description, action }) {
   return (
     <Box

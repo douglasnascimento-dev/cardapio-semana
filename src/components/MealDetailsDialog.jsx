@@ -112,8 +112,6 @@ function DetailsSkeleton() {
   )
 }
 
-// `meal` pode ser só o resumo vindo do card (id, nome e foto). Ele é
-// mostrado na hora, enquanto o restante é carregado pelo useMealDetails.
 export default function MealDetailsDialog({ meal, open, onClose }) {
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'))
@@ -136,8 +134,10 @@ export default function MealDetailsDialog({ meal, open, onClose }) {
       fullScreen={fullScreen}
       maxWidth="md"
       fullWidth
-      scroll="body"
-      slotProps={{ paper: { sx: { borderRadius: fullScreen ? 0 : 5, overflow: 'hidden' } } }}
+      scroll={fullScreen ? 'paper' : 'body'}
+      slotProps={{
+        paper: { sx: fullScreen ? { borderRadius: 0 } : { borderRadius: 5, overflow: 'hidden' } },
+      }}
     >
       <Box sx={{ position: 'relative' }}>
         <Box

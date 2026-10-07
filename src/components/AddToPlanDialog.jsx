@@ -17,7 +17,6 @@ const groupSx = {
   display: 'flex',
   flexWrap: 'wrap',
   gap: 1,
-  // Botões separados (não colados), no estilo das pílulas de categoria
   '& .MuiToggleButtonGroup-grouped': {
     border: 1,
     borderColor: 'divider',
@@ -36,7 +35,6 @@ const groupSx = {
   },
 }
 
-// Sugere a primeira refeição vazia a partir de hoje
 function firstEmptySlot(days) {
   const start = DAYS.findIndex((d) => d.id === todayId())
   const ordered = [...DAYS.slice(start), ...DAYS.slice(0, start)]
@@ -52,7 +50,6 @@ export default function AddToPlanDialog({ meal, open, onClose, onAdded }) {
   const dispatch = useDispatch()
   const days = useSelector((state) => state.plan.days)
   const mealsById = useSelector((state) => state.meals.byId)
-  // Calculado só quando o componente é montado (a janela abre)
   const [choice, setChoice] = useState(() => firstEmptySlot(days))
 
   const currentId = days[choice.day][choice.slot]

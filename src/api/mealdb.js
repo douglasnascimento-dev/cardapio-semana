@@ -1,7 +1,3 @@
-// Camada de acesso à TheMealDB (https://www.themealdb.com/api.php)
-// Todas as funções aceitam { signal } para permitir cancelar a requisição
-// (útil no cleanup do useEffect com AbortController).
-
 const BASE_URL = 'https://www.themealdb.com/api/json/v1/1'
 
 async function request(path, { signal } = {}) {
@@ -12,21 +8,14 @@ async function request(path, { signal } = {}) {
   return response.json()
 }
 
-// O modo de preparo vem como um texto só, com quebras de linha e numeração
-// inconsistente ("01.", "1)", "STEP 1", às vezes nenhuma). Aqui vira uma
-// lista de passos sem numeração, e a interface numera do seu jeito.
 function splitInstructions(text) {
   if (!text) return []
   return text
     .split(/\r?\n/)
     .map((line) => line.replace(/^\s*(step\s*\d+\s*[:.)-]?|\d+\s*[.):-])\s*/i, '').trim())
-    // descarta linhas que são só numeração, como "STEP 2" ou "2"
     .filter((line) => line && !/^(step\s*)?\d*[.)]?$/i.test(line))
 }
 
-// A API devolve os ingredientes "achatados" em strIngredient1..20 e
-// strMeasure1..20, com valores vazios, só com espaços ou null.
-// Aqui viram um array limpo: [{ name, measure }].
 export function normalizeMeal(raw) {
   const ingredients = []
   for (let i = 1; i <= 20; i++) {
@@ -54,7 +43,6 @@ export function normalizeMeal(raw) {
   }
 }
 
-// filter.php devolve só id, nome e foto (sem ingredientes)
 function normalizeSummary(raw) {
   return {
     id: raw.idMeal,
@@ -63,14 +51,12 @@ function normalizeSummary(raw) {
   }
 }
 
-// Foto do ingrediente (variações: -small, -medium ou sem sufixo)
 export function ingredientImage(name, size = 'small') {
   return `https://www.themealdb.com/images/ingredients/${encodeURIComponent(name)}-${size}.png`
 }
 
 export async function searchMealsByName(name, options) {
   const data = await request(`search.php?s=${encodeURIComponent(name)}`, options)
-  // Sem resultados a API devolve { meals: null }, não um array vazio
   return (data.meals ?? []).map(normalizeMeal)
 }
 
@@ -103,15 +89,11 @@ export async function listIngredients(options) {
   return (data.meals ?? []).map((i) => i.strIngredient)
 }
 
-// A versão gratuita só aceita UM filtro por requisição. Para combinar
-// categoria + área + ingrediente, fazemos uma requisição por filtro (em
-// paralelo) e mantemos só as receitas presentes em todos os resultados.
 export async function filterMeals({ category, area, ingredient } = {}, options) {
   const paths = []
   if (category) paths.push(`filter.php?c=${encodeURIComponent(category)}`)
   if (area) paths.push(`filter.php?a=${encodeURIComponent(area)}`)
   if (ingredient) {
-    // A API usa "_" no lugar de espaços: "chicken breast" -> "chicken_breast"
     const value = ingredient.trim().toLowerCase().replaceAll(' ', '_')
     paths.push(`filter.php?i=${encodeURIComponent(value)}`)
   }

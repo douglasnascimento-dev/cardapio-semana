@@ -5,8 +5,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { toggleFavorite } from '../store/favoritesSlice'
 import { selectIsFavorite } from '../store/selectors'
 
-// variant "icon": coração redondo sobre a foto do card
-// variant "button": botão com texto, usado na janela de detalhes
 export default function FavoriteButton({ meal, variant = 'icon' }) {
   const dispatch = useDispatch()
   const isFavorite = useSelector((state) => selectIsFavorite(state, meal.id))

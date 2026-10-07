@@ -15,7 +15,6 @@ export const SLOTS = [
 
 export const TOTAL_SLOTS = DAYS.length * SLOTS.length
 
-// Date.getDay() começa no domingo (0); a semana do app começa na segunda
 export function todayId() {
   const index = (new Date().getDay() + 6) % 7
   return DAYS[index].id

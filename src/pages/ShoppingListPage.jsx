@@ -83,8 +83,6 @@ export default function ShoppingListPage({ onNavigate }) {
   const missingIds = useSelector(selectMissingMealIds)
   const requests = useSelector((state) => state.meals.requests)
 
-  // Receitas planejadas a partir de um filtro não têm ingredientes no
-  // cache. O thunk busca cada uma (e ignora as que já estão carregando).
   useEffect(() => {
     missingIds.forEach((id) => dispatch(fetchMealById(id)))
   }, [missingIds, dispatch])
@@ -110,8 +108,6 @@ export default function ShoppingListPage({ onNavigate }) {
     <Box
       sx={{
         display: 'grid',
-        // minmax(0, 1fr): sem isso a coluna não encolhe abaixo do conteúdo
-        // e empurra a coluna lateral para fora da tela
         gridTemplateColumns: { xs: 'minmax(0, 1fr)', md: 'minmax(0, 1fr) 300px' },
         gap: { xs: 4, md: 6 },
         alignItems: 'start',

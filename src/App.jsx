@@ -42,7 +42,6 @@ const TABS = [
   },
 ]
 
-// Número discreto ao lado do nome da aba
 function TabCount({ value }) {
   if (!value) return null
   return (
@@ -86,7 +85,7 @@ export default function App() {
             onChange={(e, newValue) => setTab(newValue)}
             variant="scrollable"
             scrollButtons={false}
-            sx={{ mx: { xs: -1.75, md: 0 } }}
+            sx={{ mx: { xs: -1.75, md: 0 }, alignSelf: { xs: 'stretch', md: 'auto' }, minWidth: 0 }}
           >
             {TABS.map((t) => (
               <Tab

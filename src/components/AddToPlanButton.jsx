@@ -14,7 +14,6 @@ export default function AddToPlanButton({ meal }) {
         Adicionar ao plano
       </Button>
 
-      {/* Montado só quando aberto, para a sugestão de dia ser recalculada */}
       {open && (
         <AddToPlanDialog
           meal={meal}

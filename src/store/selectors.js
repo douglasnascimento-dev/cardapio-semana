@@ -10,15 +10,11 @@ export const selectFavoritesCount = (state) => state.favorites.ids.length
 
 export const selectIsFavorite = (state, id) => state.favorites.ids.includes(id)
 
-// createSelector memoriza o resultado: a lista só é recalculada quando
-// os ids ou o cache de receitas mudam, e não a cada render.
 export const selectFavoriteMeals = createSelector(
   [selectFavoriteIds, selectMealsById],
   (ids, byId) => ids.map((id) => byId[id]).filter(Boolean),
 )
 
-// A semana pronta para exibir: troca os ids pelos dados das receitas.
-// [{ id: 'mon', label: 'Segunda', slots: [{ id: 'lunch', label, meal }] }]
 export const selectWeek = createSelector([selectPlanDays, selectMealsById], (days, byId) =>
   DAYS.map((day) => ({
     ...day,
@@ -36,20 +32,15 @@ export const selectPlannedCount = createSelector([selectPlanDays], (days) =>
   ),
 )
 
-// Todas as ocorrências do plano, na ordem da semana. A mesma receita pode
-// aparecer mais de uma vez (ex.: almoço de segunda e jantar de quarta).
 const selectPlannedIds = createSelector([selectPlanDays], (days) =>
   DAYS.flatMap((day) => SLOTS.map((slot) => days[day.id][slot.id]).filter(Boolean)),
 )
 
-// Receitas do plano que ainda não têm ingredientes no cache
-// (vieram de um filtro). A página de compras busca essas na API.
 export const selectMissingMealIds = createSelector(
   [selectPlannedIds, selectMealsById],
   (ids, byId) => [...new Set(ids)].filter((id) => !byId[id]?.ingredients),
 )
 
-// Receitas do plano sem repetição, com quantas vezes aparecem na semana
 export const selectPlannedMeals = createSelector(
   [selectPlannedIds, selectMealsById],
   (ids, byId) => {
@@ -59,18 +50,12 @@ export const selectPlannedMeals = createSelector(
   },
 )
 
-// "1 cup" + "1 cup" + "100g" vira "2 × 1 cup + 100g"
 function summarizeMeasures(measures) {
   const counts = new Map()
   measures.forEach((m) => counts.set(m, (counts.get(m) ?? 0) + 1))
   return [...counts].map(([m, n]) => (n > 1 ? `${n} × ${m}` : m)).join(' + ')
 }
 
-// A lista de compras é DERIVADA do plano: não fica guardada em lugar
-// nenhum. Se uma receita sai do plano, os ingredientes dela saem da lista
-// sozinhos. Ingredientes repetidos são agrupados pelo nome (sem
-// diferenciar maiúsculas). As medidas são texto livre na API ("1 cup",
-// "200g", "pinch"), então não dá para somar: elas são listadas juntas.
 export const selectShoppingList = createSelector(
   [selectPlannedIds, selectMealsById, selectChecked],
   (ids, byId, checked) => {
@@ -99,7 +84,6 @@ export const selectShoppingList = createSelector(
       checked: Boolean(checked[item.key]),
     }))
 
-    // Pendentes primeiro, depois ordem alfabética
     list.sort((a, b) => a.checked - b.checked || a.name.localeCompare(b.name))
 
     return {
